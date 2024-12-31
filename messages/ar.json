@@ -1,8 +1,5 @@
 {
-  "general": {
-    "hello": "اهلا"
-  },
-  "navbar":{
+  "navbar": {
     "HOME": "الرئيسية",
     "ABOUT US": "من نحن",
     "What we do": "ماذا نفعل",
@@ -18,15 +15,34 @@
     "Submit": "إرسال",
     "MessageSentSuccessfully": "تم إرسال الرسالة بنجاح!"
   },
-  "about":{
-    "aboutZenith":"نبذة عن Zenith"
+  "about": {
+    "aboutZenith": "نبذة عن Zenith"
   },
   "leaveReply": {
-    "LeaveReply":"اترك ردًا",
-    "submitComment":"أرسل تعليق",
-    "Comment":"تعليق",
-    "Subject":"الموضوع",
-    "Email":"البريد الإلكتروني",
-    "Name":"الاسم"
-  }
+    "LeaveReply": "اترك ردًا",
+    "submitComment": "أرسل تعليق",
+    "Comment": "تعليق *",
+    "WebSite": "الموقع الالكتروني",
+    "Email": "البريد الإلكتروني *",
+    "Name": "الاسم *"
+  },
+  "leader": {
+    "LEADERSHIP_TEAM": "فريق القيادة"
+  },
+  "contactform": {
+    "FirstNameRequired": "الاسم الأول مطلوب.",
+    "EmailRequired": "البريد الإلكتروني مطلوب.",
+    "EmailInvalid": "عنوان البريد الإلكتروني غير صالح.",
+    "MessageRequired": "الرسالة مطلوبة.",
+    "CommentRequired": "التعليق مطلوب.",
+    "NameRequired": "الاسم مطلوب.",
+    "Message_sent_successfully": "تم إرسال الرسالة بنجاح!"
+  },
+  "Inqure_Now": "استفسر الآن",
+  "Read_More": "اقرأ المزيد",
+  "Explore_More": "استكشف المزيد",
+  "Show_less": "عرض أقل",
+  "Get_in_touch": "تواصل معنا",
+  "Like": "أعجبني",
+  "Comments": "تعلقات:"
 }

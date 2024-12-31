@@ -1,5 +1,5 @@
-import Posts from '../component/Post/Post'
-import HeadBlog from '../component/HeadBlog/HeadBlog'
+import Posts from "../component/Post/Post";
+import HeadBlog from "../component/HeadBlog/HeadBlog";
 
 function Blog() {
   return (
@@ -7,6 +7,6 @@ function Blog() {
       <HeadBlog />
       <Posts />
     </>
-  )
+  );
 }
-export default Blog
+export default Blog;

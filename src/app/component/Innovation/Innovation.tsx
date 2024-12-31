@@ -1,79 +1,100 @@
-import React from 'react'
-import { Box, Typography } from '@mui/material'
-
-import { createDirectus, graphql } from '@directus/sdk'
-import ReactMarkdown from 'react-markdown';
-import { getCookie } from '@/app/utils/helper/helper';
-import { getLocale } from 'next-intl/server';
+"use client";
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Container,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
+import ReactMarkdown from "react-markdown";
+import Loader from "../Loader/Loader";
 
 interface Translations {
-  languages_code: { code: string }
-  title: string
-  content: string
+  languages_code: { code: string };
+  title: string;
+  content: string;
 }
 
 interface Page {
-  translations: Translations[]
+  translations: Translations[];
 }
 
 interface Schema {
-  about: Page
+  about: Page;
 }
 
-const BASE_URL = process.env.NEXT_APP_API_BASE_URL as string
-const client = createDirectus<Schema>(BASE_URL).with(graphql())
+export default function Innovation() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-async function HomeData(locale: string) {
-  return await client.query<Schema>(`
-    query{
-      about: pages_by_id(id: "fe1a2319-93dc-4d04-9785-38fdc53dec3d") {
-        translations(filter: {languages_code: {code: {_eq: "${locale}"}}}) {
-          title
-          content
-        }
-      }
+  const [data, setData] = useState<Schema | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchData = async () => {
+    try {
+      const res = await fetch("/api/innovation");
+      const data = await res.json();
+      setData(data?.data);
+    } catch (err) {
+      setError("Failed to fetch innovation details.");
+    } finally {
+      setLoading(false);
     }
-  `)
-}
+  };
 
-export default async function Innovation() {
-  const locale = getCookie('NEXT_LOCALES') || (await getLocale())
-  const lang = locale === 'ar' ? 'ar' : 'en'
-  let data = await HomeData(lang) 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const title = data?.about?.translations[0]?.title;
   const content = data?.about?.translations[0]?.content;
- 
+
+  if (loading || error) {
+    return (
+      <Loader
+        loading={loading}
+        error={error}
+      />
+    );
+  }
+
   return (
-    <Box bgcolor="#010715" sx={{ p: { xs: 3, md: 7 }, px: { md: 10 } }}>
-      <Box sx={{ width: { xs: '100%', md: '70%' } }}>
+    <Box
+      bgcolor={theme.customColors.accent}
+      sx={{ p: { xs: 3, md: 7 }, px: { md: 10 } }}
+    >
+      <Container>
         {title && content && (
           <Box sx={{ py: 6 }}>
-            <Typography sx={{ color: '#fff' }}>
-              {/* Render Markdown content here */}
+            <Typography sx={{ color: theme.palette.secondary.main }}>
               <ReactMarkdown
                 components={{
                   h1: ({ node, ...props }) => (
                     <div
                       style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        color: '#fff',
+                        display: "flex",
+                        alignItems: "center",
+                        color: theme.palette.secondary.main,
                         fontWeight: 800,
-                        fontSize: '20px',
-                        marginBottom: '16px',
+                        fontSize: isMobile ? "10px" : "20px",
+                        marginBottom: "16px",
+                        fontFamily: "Poppins",
                       }}
                       {...props}
                     >
                       <h1
                         style={{
-                          marginInlineEnd: '10px',
+                          marginInlineEnd: "10px",
+                          fontFamily: "Poppins",
                         }}
                       >
                         {props.children}
                       </h1>
                       <svg
-                        width="48"
-                        height="48"
+                        width={isMobile ? "24" : "48"}
+                        height={isMobile ? "24" : "48"}
                         viewBox="0 0 58 58"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -89,9 +110,10 @@ export default async function Innovation() {
                     <h2
                       style={{
                         fontWeight: 800,
-                        fontSize: '35px',
-                        marginBottom: '16px',
-                        color: '#C078FE',
+                        fontSize: isMobile ? "17px" : "35px",
+                        marginBottom: "16px",
+                        color: theme.customColors.divider,
+                        fontFamily: "Poppins",
                       }}
                       {...props}
                     />
@@ -99,10 +121,11 @@ export default async function Innovation() {
                   h3: ({ node, ...props }) => (
                     <h3
                       style={{
-                        color: '#C078FE',
+                        color: theme.customColors.divider,
                         fontWeight: 800,
-                        fontSize: '30px',
-                        marginBottom: '16px',
+                        fontSize: isMobile ? "15px" : "30px",
+                        marginBottom: "16px",
+                        fontFamily: "Poppins",
                       }}
                       {...props}
                     />
@@ -110,10 +133,11 @@ export default async function Innovation() {
                   p: ({ node, ...props }) => (
                     <p
                       style={{
-                        color: '#fff',
-                        fontSize: '18px',
+                        color: theme.palette.secondary.main,
+                        fontSize: isMobile ? "9px" : "18px",
                         lineHeight: 1.8,
-                        marginBottom: '16px',
+                        marginBottom: "16px",
+                        fontFamily: "Poppins",
                       }}
                       {...props}
                     />
@@ -121,9 +145,10 @@ export default async function Innovation() {
                   a: ({ node, ...props }) => (
                     <a
                       style={{
-                        color: '#C078FE',
-                        textDecoration: 'underline',
+                        color: theme.customColors.divider,
+                        textDecoration: "underline",
                         fontWeight: 600,
+                        fontFamily: "Poppins",
                       }}
                       {...props}
                     />
@@ -131,8 +156,9 @@ export default async function Innovation() {
                   ul: ({ node, ...props }) => (
                     <ul
                       style={{
-                        paddingLeft: '1.5em',
-                        marginBottom: '16px',
+                        paddingInlineEnd: "1.5em",
+                        marginBottom: "16px",
+                        fontFamily: "Poppins",
                       }}
                       {...props}
                     />
@@ -140,9 +166,10 @@ export default async function Innovation() {
                   li: ({ node, ...props }) => (
                     <li
                       style={{
-                        color: '#fff',
-                        fontSize: '18px',
-                        marginBottom: '8px',
+                        color: theme.palette.secondary.main,
+                        fontSize: isMobile ? "9px" : "18px",
+                        marginBottom: "8px",
+                        fontFamily: "Poppins",
                       }}
                       {...props}
                     />
@@ -154,7 +181,7 @@ export default async function Innovation() {
             </Typography>
           </Box>
         )}
-      </Box>
+      </Container>
     </Box>
-  )
+  );
 }

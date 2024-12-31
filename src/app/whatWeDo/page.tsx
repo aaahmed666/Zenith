@@ -1,116 +1,127 @@
-import { Box, Typography, Link } from '@mui/material'
-import styles from '../component/Header/Header.module.css'
-
-import ServicesSection from '../component/ServicesSection/ServicesSection'
-import FieldsSection from '../component/FieldsSection/FieldsSection'
-import MakesDifferent from '../component/MakesDifferent/MakesDifferent'
-
-import { createDirectus, graphql } from '@directus/sdk'
-import { getCookie } from '../utils/helper/helper'
-import { getLocale } from 'next-intl/server'
+"use client";
+import { Box, Typography, useTheme, Container, Button } from "@mui/material";
+import styles from "../component/Header/Header.module.css";
+import ServicesSection from "../component/ServicesSection/ServicesSection";
+import FieldsSection from "../component/FieldsSection/FieldsSection";
+import MakesDifferent from "../component/MakesDifferent/MakesDifferent";
+import { useEffect, useState } from "react";
+import Loader from "../component/Loader/Loader";
 
 interface Translations {
-  languages_code: { code: string }
-  what_we_do_title: string
-  what_we_do_text: string
+  languages_code: { code: string };
+  what_we_do_title: string;
+  what_we_do_text: string;
 }
 
 interface StaticContentTexts {
-  translations: Translations[]
+  translations: Translations[];
 }
 
 interface Schema {
-  static_content_texts: StaticContentTexts
+  static_content_texts: StaticContentTexts;
 }
 
-const BASE_URL = process.env.NEXT_APP_API_BASE_URL as string
-const client = createDirectus<Schema>(BASE_URL).with(graphql())
+export default function whatWeDo() {
+  const theme = useTheme();
+  const [data, setData] = useState<Schema | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-async function HomeData(locale: string) {
-  return await client.query<Schema>(`
-    query{
-      static_content_texts{ 
-        translations(filter: {languages_code: {code: {_eq: "${locale}"}}}){
-          what_we_do_title  
-          what_we_do_text 
-        }
-      }
+  const fetchData = async () => {
+    try {
+      const res = await fetch("/api/whatWeDo");
+      const data = await res.json();
+      setData(data?.data);
+    } catch (err) {
+      setError("Failed to what we do details.");
+    } finally {
+      setLoading(false);
     }
-  `)
-}
+  };
 
-export default async function whatWeDo() {
-  const locale = getCookie('NEXT_LOCALES') || (await getLocale())
-  const lang = locale === 'ar' ? 'ar' : 'en'
-  let data = await HomeData(lang) 
-  const staticContent = data?.static_content_texts?.translations?.[0] || {}
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const staticContent =
+    data?.static_content_texts?.translations?.[0] || ({} as Translations);
 
   return (
     <>
       <Box
         display="flex"
         justifyContent="center"
-        alignItems="center"
-        sx={{ height: { md: '100vh' }, textAlign: 'center', pt: { xs: 9 } }}
+        sx={{
+          pt: 5,
+          height: "100vh",
+          textAlign: "center",
+          alignItems: { sx: "end", md: "center" },
+        }}
         className={styles.headerPage}
       >
-        <Box sx={{ pt: { xs: 9 } }}>
-          <Link
-            href="/about"
-            sx={{
-              my: 9,
-              color: '#fff',
-              fontSize: { xs: '40px', md: '50px' },
-              fontWeight: 600,
-              lineHeight: '56px',
-              position: 'relative',
-              textDecoration: 'none',
-              textTransform: 'uppercase',
-              background:
-                'linear-gradient(to right, #FDFDFD, #FDFDFD, #0000FE, #0000FE )',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              '&::after': {
-                content: '""',
-                position: 'absolute',
-                left: 0,
-                bottom: '-5px',
-                width: '100%',
-                height: '2px',
-                backgroundColor: '#8411E6',
-                transform: 'scaleX(0)',
-                transformOrigin: 'bottom right',
-                transition: 'transform 0.3s ease',
-              },
-              '&:hover::after': {
-                transform: 'scaleX(1)',
-                transformOrigin: 'bottom left',
-              },
-            }}
-          >
-            {staticContent?.what_we_do_title ?? ''}
-          </Link>
-          <Typography
-            variant="body2"
-            sx={{
-              my: 5,
-              width: { xs: '95%', md: '70%' },
-              mx: 'auto',
-              color: 'rgba(179,185,198,1)',
-              fontSize: { xs: '16px', md: '24px' },
-              fontWeight: 400,
-              lineHeight: '33.6px',
-            }}
-          >
-            {staticContent?.what_we_do_text ?? ''}
-          </Typography>
-        </Box>
+        <Container>
+          <Box sx={{ pt: { xs: 9 } }}>
+            {(loading || error) && (
+              <Loader
+                loading={loading}
+                error={error}
+              />
+            )}
+            <Button
+              sx={{
+                my: 9,
+                color: theme.palette.secondary.main,
+                fontSize: { xs: "40px", md: "50px" },
+                fontWeight: 600,
+                lineHeight: "56px",
+                position: "relative",
+                textDecoration: "none",
+                textTransform: "uppercase",
+                background:
+                  "linear-gradient(to right, #FDFDFD, #FDFDFD, #0000FE, #0000FE )",
+                backgroundClip: "text",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                "&::after": {
+                  content: '""',
+                  position: "absolute",
+                  insetInlineStart: 0,
+                  bottom: "-5px",
+                  width: "100%",
+                  height: "2px",
+                  backgroundColor: theme.palette.primary.main,
+                  transform: "scaleX(0)",
+                  transformOrigin: "bottom right",
+                  transition: "transform 0.3s ease",
+                },
+                "&:hover::after": {
+                  transform: "scaleX(1)",
+                  transformOrigin: "bottom left",
+                },
+              }}
+            >
+              {staticContent?.what_we_do_title ?? ""}
+            </Button>
+            <Typography
+              variant="h2"
+              sx={{
+                my: 5,
+                mx: "auto",
+                color: theme.customColors.secondary,
+                fontSize: { xs: "16px", md: "24px" },
+                fontWeight: 400,
+                lineHeight: "33.6px",
+              }}
+            >
+              {staticContent?.what_we_do_text ?? ""}
+            </Typography>
+          </Box>
+        </Container>
       </Box>
 
       <FieldsSection />
       <MakesDifferent />
       <ServicesSection />
     </>
-  )
+  );
 }

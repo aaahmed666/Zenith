@@ -1,94 +1,97 @@
-import React from 'react'
-import { Box, Typography, Container } from '@mui/material'
-import Grid from '@mui/material/Grid2'
-import MissionCard from '../../MissionCardProps/MissionCardProps'
-
-import { createDirectus, graphql } from '@directus/sdk'
-import { getCookie } from '@/app/utils/helper/helper'
-import { getLocale } from 'next-intl/server'
+"use client";
+import React, { useEffect, useState } from "react";
+import { Box, Typography, Container, useTheme } from "@mui/material";
+import Grid from "@mui/material/Grid2";
+import MissionCard from "../../MissionCardProps/MissionCardProps";
+import Loader from "../Loader/Loader";
 
 interface Translations {
-  languages_code: { code: string }
-  title: string
-  text: string
-  our_mission_title: string
+  languages_code: { code: string };
+  title: string;
+  text: string;
+  our_mission_title: string;
 }
 
 interface Mission {
-  translations: Translations[]
+  translations: Translations[];
 }
 interface StaticContentTexts {
-  translations: Translations[]
+  translations: Translations[];
 }
 
 interface Schema {
-  mission: Mission[]
-  static_content_texts: StaticContentTexts
+  mission: Mission[];
+  static_content_texts: StaticContentTexts;
 }
-const BASE_URL = process.env.NEXT_APP_API_BASE_URL as string
-const client = createDirectus<Schema>(BASE_URL).with(graphql())
 
-async function HomeData(locale: string) {
-  return await client.query<Schema>(`
-    query{
-      mission {
-        translations(filter: {languages_code: {code: {_eq: "${locale}"}}}) {
-          title
-          text
-        }
-      }
-      static_content_texts {
-        translations(filter: {languages_code: {code: {_eq: "${locale}"}}}) {
-          our_mission_title
-        }
-      }
+export default function MissionStatement() {
+  const theme = useTheme();
+  const [data, setData] = useState<Schema | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchData = async () => {
+    try {
+      const res = await fetch("/api/mission");
+      const data = await res.json();
+      setData(data?.data);
+    } catch (err) {
+      setError("Failed to fetch mission statement details.");
+    } finally {
+      setLoading(false);
     }
-  `)
-}
+  };
 
-export default async function MissionStatement() {
-  // console.log("ahmed", JSON.stringify(await HomeData(), null,2) );
-  const locale = getCookie('NEXT_LOCALES') || (await getLocale())
-  const lang = locale === 'ar' ? 'ar' : 'en'
-  let data = await HomeData(lang)
-  const staticContent = data?.static_content_texts?.translations?.[0] || {}
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  if (loading || error) {
+    return (
+      <Loader
+        loading={loading}
+        error={error}
+      />
+    );
+  }
+
+  const staticContent =
+    data?.static_content_texts?.translations?.[0] || ({} as Translations);
+
   return (
     <Box
       sx={{
-        py: 8,
-        backgroundColor: '#010715',
-        textAlign: 'center',
-        maxHeight: { md: '75vh' },
-        display: 'flex',
-        alignItems: 'center',
+        py: 12,
+        backgroundColor: theme.customColors.accent,
+        textAlign: "center",
+        display: "flex",
+        alignItems: "center",
       }}
     >
-      <Container maxWidth="xl" sx={{ width: '95%', mx: 'auto', px: { xs: 0 } }}>
+      <Container>
         <Box>
           <Typography
             variant="h4"
-            component="h2"
-            align="center"
             sx={{
-              fontSize: { xs: '25px' },
-              fontWeight: 'bold',
-              mx: 'auto',
-              color: '#fff',
+              fontSize: ["20px", "40px"],
+              fontWeight: 600,
+              mx: "auto",
+              color: theme.palette.secondary.main,
+              textTransform: "uppercase",
             }}
           >
-            {staticContent.our_mission_title}
-            {/* OUR MISSION STATEMENT */}
+            {staticContent?.our_mission_title ?? ""}
           </Typography>
+
           <Grid
             container
             justifyContent="center"
-            sx={{ display: 'flex', mt: 4, width: '85%', mx: 'auto' }}
-            spacing={1}
+            sx={{ display: "flex", mt: 4, mx: "auto" }}
+            spacing={3}
           >
-            {data.mission.map((item, index) => (
+            {data?.mission?.map((item, index) => (
               <Grid
                 size={{ xs: 12, sm: 6, md: 4 }}
-                sx={{ px: { md: 0 } }}
                 key={index}
               >
                 <MissionCard
@@ -101,5 +104,5 @@ export default async function MissionStatement() {
         </Box>
       </Container>
     </Box>
-  )
+  );
 }

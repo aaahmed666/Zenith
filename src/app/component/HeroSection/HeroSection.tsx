@@ -1,60 +1,67 @@
-import React from 'react'
-import { Box, Typography, Button, Container } from '@mui/material'
-import Grid from '@mui/material/Grid2'
-import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt'
-import { createDirectus, graphql } from '@directus/sdk'
-import { getLocale } from 'next-intl/server'
-import { getCookie } from '@/app/utils/helper/helper'
+"use client";
+import React, { useEffect, useState } from "react";
+import { Box, Typography, Button, Container, useTheme } from "@mui/material";
+import Grid from "@mui/material/Grid2";
+import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
+import Loader from "../Loader/Loader";
 
 interface Video {
-  languages_code: { code: string }
-  headline: string
-  text: string
-  sub_headline: string
-  button_text: string
+  languages_code: { code: string };
+  headline: string;
+  text: string;
+  sub_headline: string;
+  button_text: string;
 }
 
 interface Schema {
-  home_page: { video: Video[]; video_url: string }
+  home_page: { video: Video[]; video_url: string };
 }
 
-const BASE_URL = process.env.NEXT_APP_API_BASE_URL as string
-const client = createDirectus<Schema>(BASE_URL).with(graphql())
+export default function HeroSection() {
+  const theme = useTheme();
+  const [data, setData] = useState<Schema | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-async function HomeData(locale: string) {
-  return await client.query<Schema>(`
-    query{
-      home_page {
-        video_url
-        video(filter: {languages_code: {code: {_eq: "${locale}"}}}) {
-          languages_code {
-            code
-          }
-          button_text
-          headline
-          text
-          sub_headline
-        }
-      }
+  const fetchData = async () => {
+    try {
+      const res = await fetch("/api/hero");
+      const data = await res.json();
+      setData(data?.data);
+    } catch (err) {
+      setError("Failed to fetch hero details.");
+    } finally {
+      setLoading(false);
     }
-  `)
-}
+  };
 
-export default async function HeroSection() {
-  const locale = getCookie('NEXT_LOCALES') || (await getLocale())
-  const lang = locale === 'ar' ? 'ar' : 'en'
-  let data = await HomeData(lang)
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  if (loading || error) {
+    return (
+      <Loader
+        loading={loading}
+        error={error}
+      />
+    );
+  }
+
   return (
-    <Container  sx={{ py: { xs: '50px 20px', md: '50px'}, }}>
+    <Container>
       <Grid
         container
-        sx={{ mx: 'auto' }}
-        columnSpacing={12}
+        sx={{ py: 12 }}
+        spacing={6}
         alignItems="center"
         justifyContent="space-between"
       >
-        <Grid size={{ xs: 12, sm: 6, md: 6 }} sx={{  }}>
-          <Box display="flex" alignItems="center">
+        <Grid size={{ xs: 12, xl: 6 }}>
+          <Box
+            display="flex"
+            alignItems="center"
+          >
             <svg
               width="40"
               height="40"
@@ -69,37 +76,70 @@ export default async function HeroSection() {
             </svg>
             <Typography
               variant="h4"
-              gutterBottom
-              fontWeight="bold"
-              style={{ paddingLeft: '10px' }}
+              sx={{
+                paddingInlineStart: "10px",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                color: theme.customColors.text,
+                fontSize: ["20px", "40px"],
+              }}
             >
-              {data?.home_page?.video?.[0]?.headline ?? ''}
+              {data?.home_page?.video?.[0]?.headline ?? ""}
             </Typography>
           </Box>
-          <Typography sx={{ my: 3 }}>
-            {data?.home_page?.video?.[0]?.text ?? ''}
+          <Typography
+            variant="h4"
+            sx={{
+              my: 3,
+              fontWeight: 400,
+              color: theme.customColors.text,
+              fontSize: ["12px", "20px"],
+            }}
+          >
+            {data?.home_page?.video?.[0]?.text ?? ""}
           </Typography>
-          <Typography variant="h5" component="h5">
-            {data?.home_page?.video?.[0]?.sub_headline ?? ''}
+          <Typography
+            variant="h5"
+            sx={{
+              my: 3,
+              fontWeight: 600,
+              color: theme.customColors.text,
+              fontSize: ["12px", "20px"],
+            }}
+          >
+            {data?.home_page?.video?.[0]?.sub_headline ?? ""}
           </Typography>
           <Button
-            endIcon={<ArrowRightAltIcon />}
+            endIcon={
+              <ArrowRightAltIcon
+                fontSize="large"
+                sx={{ fontSize: "35px" }}
+              />
+            }
             variant="text"
-            sx={{ py: 2 }}
+            sx={{
+              my: 2,
+              fontWeight: 500,
+              color: theme.customColors.primary,
+              fontSize: ["15px", "24px"],
+              "&:hover": {
+                backgroundColor: "transparent",
+              },
+            }}
             href="#contact"
           >
-            {data?.home_page?.video?.[0]?.button_text ?? ''}
+            {data?.home_page?.video?.[0]?.button_text ?? ""}
           </Button>
         </Grid>
 
-        <Grid size={{ sm: 6, md: 5 }}>
+        <Grid size={{ xs: 12, xl: 6 }}>
           <Box
             flex={1}
             display="flex"
             justifyContent="center"
             alignItems="center"
             bgcolor="grey.300"
-            sx={{ height: { xs: 300, md: 500 }, width: { xs: 300, md: 500 } }}
+            sx={{ height: { xs: 300, md: 500 } }}
           >
             <iframe
               width="100%"
@@ -115,5 +155,5 @@ export default async function HeroSection() {
         </Grid>
       </Grid>
     </Container>
-  )
+  );
 }

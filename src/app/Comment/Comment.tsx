@@ -1,15 +1,16 @@
-import ThumbUpIcon from '@mui/icons-material/ThumbUp'
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline'
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'
-import { Avatar, Box, IconButton, Stack, Typography } from '@mui/material'
+"use client";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import { Box, Typography, useTheme } from "@mui/material";
+import ChatIcon from "@mui/icons-material/Chat";
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 
 interface CommentProps {
-  name: string
-  date: string
-  text: string
-  likes: number
-  replies: number
-  nested?: boolean
+  name: string;
+  date: string;
+  text: string;
+  likes: number;
+  replies: number;
+  nested?: boolean;
 }
 
 const Comment: React.FC<CommentProps> = ({
@@ -20,46 +21,94 @@ const Comment: React.FC<CommentProps> = ({
   replies,
   nested = false,
 }) => {
+  const theme = useTheme();
+
   return (
     <Box
       sx={{
-        backgroundColor: nested ? '#f5f5f5' : '#2D2D2D',
-        color: nested ? 'black' : 'white',
-        borderRadius: 2,
-        padding: 2,
-        marginY: nested ? 1 : 2,
-        marginLeft: nested ? 4 : 0,
-        width: '100%',
+        backgroundColor: theme.customColors.replay,
+        color: theme.customColors.text,
+        borderInlineStart: nested ? `1px solid ${theme.customColors.third}` : 0,
       }}
     >
-      <Stack direction="row" spacing={2} alignItems="center">
-        <Avatar>
-          <AccountCircleIcon />
-        </Avatar>
-        <Stack spacing={0.5}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-            {name}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {date}
-          </Typography>
-        </Stack>
-      </Stack>
-      <Typography variant="body2" sx={{ marginY: 1 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-start",
+          alignItems: "center",
+          marginInlineStart: "5px",
+        }}
+      >
+        <AccountCircleOutlinedIcon />
+        <Typography
+          variant="h4"
+          sx={{
+            fontWeight: 700,
+            fontSize: ["7px", "15px"],
+            mx: 1,
+            color: theme.customColors.text,
+            lineHeight: "27px",
+          }}
+        >
+          {name}
+        </Typography>
+        <Typography
+          variant="h4"
+          sx={{
+            fontSize: ["6px", "14px"],
+            color: theme.customColors.text,
+            fontWeight: 300,
+            mx: 1,
+            lineHeight: "27px",
+          }}
+        >
+          {date}
+        </Typography>
+        <ThumbUpIcon
+          sx={{ color: theme.customColors.third }}
+          fontSize="small"
+        />
+        <Typography
+          variant="h3"
+          sx={{
+            fontSize: ["7px", "15px"],
+            margin: "0 5px",
+            color: theme.customColors.third,
+            fontWeight: 300,
+          }}
+        >
+          {likes}
+        </Typography>
+        <ChatIcon
+          sx={{ color: theme.customColors.third }}
+          fontSize="small"
+        />
+        <Typography
+          variant="h3"
+          sx={{
+            fontSize: ["7px", "15px"],
+            margin: "0 5px",
+            color: theme.customColors.third,
+            fontWeight: 300,
+          }}
+        >
+          {replies}
+        </Typography>
+      </Box>
+      <Typography
+        variant="h2"
+        sx={{
+          fontSize: ["6px", "15px"],
+          fontWeight: 400,
+          color: theme.customColors.text,
+          p: 1,
+          mb: 2,
+        }}
+      >
         {text}
       </Typography>
-      <Stack direction="row" spacing={2} alignItems="center">
-        <IconButton size="small" color="inherit">
-          <ThumbUpIcon fontSize="small" />
-        </IconButton>
-        <Typography variant="caption">{likes}</Typography>
-        <IconButton size="small" color="inherit">
-          <ChatBubbleOutlineIcon fontSize="small" />
-        </IconButton>
-        <Typography variant="caption">{replies}</Typography>
-      </Stack>
     </Box>
-  )
-}
+  );
+};
 
-export default Comment
+export default Comment;

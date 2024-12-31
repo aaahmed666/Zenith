@@ -1,13 +1,17 @@
-import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
+import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
+
+const BASE_URL =
+  (process.env.NEXT_APP_API_BASE_URL as string) ||
+  (process.env.td_api as string);
 
 const client = new ApolloClient({
-  uri: 'https://cms-zenith.treasuredeal.com/graphql',
+  uri: `${BASE_URL}/graphql`,
   cache: new InMemoryCache(),
-})
+});
 
 export async function POST(req: Request) {
   try {
-    const data = await req.json()
+    const data = await req.json();
     const query = gql`
       mutation {
         create_contact_us_messages_item(
@@ -19,16 +23,16 @@ export async function POST(req: Request) {
           }
         )
       }
-    `
+    `;
 
     const result = await client.mutate({
       mutation: query,
-    })
+    });
 
     return new Response(JSON.stringify({ success: true, data: result.data }), {
       status: 200,
-    })
+    });
   } catch (error) {
-    console.error('Error sending message:', error)
+    console.error("Error sending message:", error);
   }
 }

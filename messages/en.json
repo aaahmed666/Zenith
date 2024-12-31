@@ -1,7 +1,4 @@
 {
-  "general": {
-    "hello": "اهلا"
-  },
   "navbar": {
     "HOME": "Home",
     "ABOUT US": "About Us",
@@ -18,15 +15,34 @@
     "Submit": "Submit",
     "MessageSentSuccessfully": "Message sent successfully!"
   },
-  "about":{
-    "aboutZenith":"About Zenith"
+  "about": {
+    "aboutZenith": "About Zenith"
   },
   "leaveReply": {
-    "LeaveReply":"Leave a Reply",
-    "submitComment":"Submit Comment",
-    "Comment":"Comment",
-    "Subject":"Subject",
-    "Email":"Email",
-    "Name":"Name"
-  }
+    "LeaveReply": "Leave a Reply",
+    "submitComment": "Submit Comment",
+    "Comment": "Comment *",
+    "WebSite": "WebSite",
+    "Email": "Email *",
+    "Name": "Name *"
+  },
+  "leader": {
+    "LEADERSHIP_TEAM": "LEADERSHIP TEAM"
+  },
+  "contactform": {
+    "FirstNameRequired": "First Name is required.",
+    "EmailRequired": "Email is required.",
+    "EmailInvalid": "Invalid email address.",
+    "MessageRequired": "Message is required.",
+    "CommentRequired": "Comment is required.",
+    "NameRequired": "Name is required.",
+    "Message_sent_successfully": "Message sent successfully!"
+  },
+  "Inqure_Now": "Inqure Now",
+  "Read_More": "Read More",
+  "Explore_More": "Explore More",
+  "Show_less": "Show less",
+  "Get_in_touch": "Get in touch",
+  "Like": "Like",
+  "Comments": "Comments:"
 }

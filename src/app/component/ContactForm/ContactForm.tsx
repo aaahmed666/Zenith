@@ -1,67 +1,93 @@
-'use client'
-// import { GetServerSideProps } from 'next'
-import { Box, Button, Container, TextField, Typography } from '@mui/material'
-// import { createDirectus, graphql } from '@directus/sdk'
-import { useState } from 'react';
-import Grid from '@mui/material/Grid2';
-import { useTranslations } from 'next-intl';
-
-// interface Post {
-//   contact_us_text: string
-//   contact_us_title: string
-//   contact_us_form_note: string
-// }
-
-// interface ContactPageProps {
-//   contactUsText: string
-//   contactUsTitle: string
-//   contactUsFormNote: string
-//   response: string
-// }
+"use client";
+import {
+  Box,
+  Button,
+  Container,
+  InputLabel,
+  TextField,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import { useState } from "react";
+import Grid from "@mui/material/Grid2";
+import { useTranslations } from "next-intl";
 
 export default function ContactForm() {
-  const t = useTranslations()
-  
-  const [email, setEmail] = useState('')
-  const [message, setMessage] = useState('')
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState(false)
+  const t = useTranslations();
+  const theme = useTheme();
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [errors, setErrors] = useState({
+    firstName: "",
+    email: "",
+    message: "",
+  });
+
+  const validateForm = () => {
+    const newErrors: typeof errors = { firstName: "", email: "", message: "" };
+    let isValid = true;
+
+    if (!firstName.trim()) {
+      newErrors.firstName = t("contactform.FirstNameRequired");
+      isValid = false;
+    }
+    if (!email.trim()) {
+      newErrors.email = t("contactform.EmailRequired");
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = t("contactform.EmailInvalid");
+      isValid = false;
+    }
+    if (!message.trim()) {
+      newErrors.message = t("contactform.MessageRequired");
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
 
     const formData = {
       email,
       message,
       first_name: firstName,
       last_name: lastName,
-    }
+    };
 
     try {
-      const res = await fetch('/api/sendContactMessage', {
-        method: 'POST',
+      const res = await fetch("/api/sendContactMessage", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
-      })
+      });
 
-      const data = await res.json()
+      const data = await res.json();
 
       if (data.success) {
-        setSuccess(true)
-        setError('')
+        setSuccess(true);
+        setError("");
       } else {
-        setError(data.errorMessage)
-        setSuccess(false)
+        setError(data.errorMessage);
+        setSuccess(false);
       }
     } catch (error) {
-      setError('An error occurred while sending the message')
-      setSuccess(false)
+      setError("An error occurred while sending the message");
+      setSuccess(false);
     }
-  }
+  };
 
   return (
     <Container>
@@ -69,79 +95,105 @@ export default function ContactForm() {
         <Grid
           container
           spacing={2}
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            textAlign:'center'
-          }}
         >
           <Grid size={{ xs: 12, md: 6 }}>
+            <InputLabel sx={{ marginBottom: "15px" }}>
+              {t("form.FirstName")}
+            </InputLabel>
             <TextField
-              label={t('form.FirstName')}
               fullWidth
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               required
+              error={!!errors.firstName}
+              helperText={errors.firstName}
               sx={{ mb: 2 }}
+              placeholder="please enter your first name"
             />
           </Grid>
 
           <Grid size={{ xs: 12, md: 6 }}>
+            <InputLabel sx={{ marginBottom: "15px" }}>
+              {t("form.LastName")}
+            </InputLabel>
             <TextField
-              label={t('form.LastName')}
               fullWidth
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               required
               sx={{ mb: 2 }}
+              placeholder="please enter your last name"
             />
           </Grid>
 
           <Grid size={{ xs: 12, md: 12 }}>
+            <InputLabel sx={{ marginBottom: "15px" }}>
+              {t("form.Email")}
+            </InputLabel>
             <TextField
-              label={t('form.Email')}
               fullWidth
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              error={!!errors.email}
+              helperText={errors.email}
               sx={{ mb: 2 }}
+              placeholder="please enter your email"
             />
           </Grid>
           <Grid size={{ xs: 12, md: 12 }}>
+            <InputLabel sx={{ marginBottom: "15px" }}>
+              {t("form.Message")}
+            </InputLabel>
             <TextField
-              label={t('form.Message')}
               fullWidth
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               required
+              error={!!errors.message}
+              helperText={errors.message}
               multiline
               rows={4}
               sx={{ mb: 2 }}
+              placeholder="please enter your message"
             />
           </Grid>
 
           <Grid size={{ xs: 12, md: 12 }}>
-            <Button
-              variant="contained"
-              type="submit"
-              sx={{ backgroundColor: '#DAFF23', color: 'black', px: 4 }}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-around",
+                alignItems: "center",
+                marginTop: "10px",
+              }}
             >
-              {t('form.Submit')}
-            </Button>
+              <Button
+                variant="contained"
+                type="submit"
+                sx={{
+                  backgroundColor: theme.customColors.button,
+                  color: theme.customColors.text,
+                  px: [4, 8],
+                  fontSize: ["10px", "20px"],
+                }}
+              >
+                {t("form.Submit")}
+              </Button>
+            </Box>
           </Grid>
         </Grid>
-
       </form>
 
       {success && (
-        <Typography sx={{ mt: 2, color: 'green' }}>
-          Message sent successfully!
+        <Typography sx={{ mt: 2, color: "green" }}>
+          {t("contactform.Message_sent_successfully")}
         </Typography>
       )}
       {error && (
-        <Typography sx={{ mt: 2, color: 'red' }}>Error: {error}</Typography>
+        <Typography sx={{ mt: 2, color: "red" }}>Error: {error}</Typography>
       )}
     </Container>
-  )
+  );
 }

@@ -1,34 +1,44 @@
-'use client'
-import React from 'react'
-import Slider from 'react-slick'
-import 'slick-carousel/slick/slick.css'
-import 'slick-carousel/slick/slick-theme.css'
-import { Box, Button, Card, CardContent, Container, Typography } from '@mui/material'
-import Grid from '@mui/material/Grid2'
+"use client";
+import React from "react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import {
+  Box,
+  Button,
+  Card,
+  Container,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import Grid from "@mui/material/Grid";
+import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 type Service = {
-  icon: string
-  title: string
-  description: string
-}
+  icon: string;
+  title: string;
+  description: string;
+};
 
-// Define the props for the Sliders component using `type`
 type SlidersProps = {
-  services: Service[]
-}
+  services?: Service[];
+};
 
-const Sliders: React.FC<SlidersProps> = ({ services }) => {
+const Sliders: React.FC<SlidersProps> = ({ services }: SlidersProps) => {
   const settings = {
     dots: true,
     infinite: true,
     speed: 500,
-    slidesToShow: 3, // Default to 3 slides on large screens
+    slidesToShow: 3,
     slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
     responsive: [
       {
-        breakpoint: 1024, // Tablets and up (default: 3 slides)
+        breakpoint: 1024,
         settings: {
-          slidesToShow: 2, // 2 slides on tablets
+          slidesToShow: 2,
         },
       },
       {
@@ -40,85 +50,96 @@ const Sliders: React.FC<SlidersProps> = ({ services }) => {
         },
       },
     ],
-  }
+  };
+  const theme = useTheme();
+  const t = useTranslations();
 
   return (
-    // <Box
-    // >
     <Container
       sx={{
-        overflow: 'hidden',
-        padding: { xs: 2, sm: 3, md: 4 },
+        overflow: "hidden",
       }}
-      >
-        <Slider {...settings}>
-          {services?.map((service, i) => (
-            <Grid size={{ xs: 12, md: 11 }} key={i}>
+    >
+      <Slider {...settings}>
+        {services?.map((service, i) => (
+          <Grid
+            container
+            spacing={8}
+          >
+            <Grid
+              item
+              xs={12}
+              key={i}
+            >
               <Card
                 sx={{
-                  bgcolor: 'transparent',
-                  border: '1px solid',
+                  bgcolor: "transparent",
+                  border: "1px solid",
                   borderImageSource:
-                    'linear-gradient(180deg, #8411E6 0%, #0000FE 100%)',
+                    "linear-gradient(180deg, #8411E6 0%, #0000FE 100%)",
                   borderImageSlice: 1,
-                  color: '#fff',
-                  py: { xs: 0, md: 3 },
-                  mx: { xs: 2 },
-                  boxSizing: 'border-box',
-                  minHeight: { md: '320px' },
+                  color: theme.palette.secondary.main,
+                  boxSizing: "border-box",
+                  minHeight: "350px",
+                  p: 3,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
                 }}
               >
-                <Box>
-                  <img
-                    style={{
-                      width: '20%',
-                      margin: '8px auto',
-                    }}
+                <Box sx={{ margin: "8px auto" }}>
+                  <Image
+                    width="100"
+                    height="100"
                     src={service?.icon}
                     alt=""
                   />
                 </Box>
-                <CardContent sx={{ px: 0 }}>
+                <Box sx={{ px: 0, flexGrow: 1 }}>
                   <Typography
-                    variant="h6"
-                    gutterBottom
+                    variant="h1"
                     sx={{
                       fontWeight: 600,
-                      textTransform: 'uppercase',
+                      textTransform: "uppercase",
+                      my: 2,
+                      color: theme.palette.secondary.main,
+                      fontSize: ["10px", "18px"],
                     }}
                   >
-                    {service?.title}
+                    {service?.title ?? ""}
                   </Typography>
                   <Typography
-                    variant="body2"
-                    sx={{ px: 2, fontWeight: 600 }}
-                    color="gray"
-                    gutterBottom
-                  >
-                    {service?.description}
-                  </Typography>
-                  <Button
+                    variant="h2"
                     sx={{
-                      bgcolor: '#0000EF',
-                      color: '#fff',
-                      px: 3,
-                      pt: 1,
-                      mt: 3,
-                      textTransform: 'none',
+                      px: 2,
+                      fontWeight: 300,
+                      fontSize: ["7px", "15px"],
+                      color: theme.palette.secondary.main,
                     }}
                   >
-                    Explore More
-                  </Button>
-                </CardContent>
+                    {service?.description ?? ""}
+                  </Typography>
+                </Box>
+                <Button
+                  sx={{
+                    bgcolor: theme.customColors.primary,
+                    color: theme.palette.secondary.main,
+                    textTransform: "none",
+                    mt: 2,
+                    p: 1,
+                    fontWeight: 600,
+                    fontSize: ["8px", "16px"],
+                  }}
+                >
+                  {t("Explore_More")}
+                </Button>
               </Card>
             </Grid>
-          ))}
-        </Slider>
+          </Grid>
+        ))}
+      </Slider>
+    </Container>
+  );
+};
 
-      </Container>
-
-    // </Box>
-  )
-}
-
-export default Sliders
+export default Sliders;
