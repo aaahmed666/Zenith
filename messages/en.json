@@ -1,0 +1,32 @@
+{
+  "general": {
+    "hello": "اهلا"
+  },
+  "navbar": {
+    "HOME": "Home",
+    "ABOUT US": "About Us",
+    "What we do": "What We Do",
+    "Technical expertise": "Technical Expertise",
+    "Blog": "Blog",
+    "Contact_Us": "Contact Us"
+  },
+  "form": {
+    "FirstName": "First Name",
+    "LastName": "Last Name",
+    "Email": "Email",
+    "Message": "Message",
+    "Submit": "Submit",
+    "MessageSentSuccessfully": "Message sent successfully!"
+  },
+  "about":{
+    "aboutZenith":"About Zenith"
+  },
+  "leaveReply": {
+    "LeaveReply":"Leave a Reply",
+    "submitComment":"Submit Comment",
+    "Comment":"Comment",
+    "Subject":"Subject",
+    "Email":"Email",
+    "Name":"Name"
+  }
+}

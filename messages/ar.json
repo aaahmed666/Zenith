@@ -1,0 +1,32 @@
+{
+  "general": {
+    "hello": "اهلا"
+  },
+  "navbar":{
+    "HOME": "الرئيسية",
+    "ABOUT US": "من نحن",
+    "What we do": "ماذا نفعل",
+    "Technical expertise": "الخبرة التقنية",
+    "Blog": "مدونة",
+    "Contact_Us": "اتصل بنا"
+  },
+  "form": {
+    "FirstName": "الاسم الأول",
+    "LastName": "الاسم الأخير",
+    "Email": "البريد الإلكتروني",
+    "Message": "الرسالة",
+    "Submit": "إرسال",
+    "MessageSentSuccessfully": "تم إرسال الرسالة بنجاح!"
+  },
+  "about":{
+    "aboutZenith":"نبذة عن Zenith"
+  },
+  "leaveReply": {
+    "LeaveReply":"اترك ردًا",
+    "submitComment":"أرسل تعليق",
+    "Comment":"تعليق",
+    "Subject":"الموضوع",
+    "Email":"البريد الإلكتروني",
+    "Name":"الاسم"
+  }
+}

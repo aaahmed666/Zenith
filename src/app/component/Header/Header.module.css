@@ -1,0 +1,43 @@
+.headerPage {
+  background-color: #010715;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.headerPage::after {
+  content: "";
+  position: absolute;
+  left: -700px;
+  bottom: -688px;
+  bottom: -710px;
+  border-radius: 50%;
+  width: 87%;
+  height: 156%;
+  background: -webkit-radial-gradient(
+    circle,
+    rgba(187, 236, 60, 1) -14%,
+    rgba(177, 236, 0, -359.884) 46%,
+    rgba(177, 236, 0, -13.884) 57%
+  );
+  transform: rotate(-65deg);
+  z-index: -1;
+}
+
+.headerPage::before {
+  content: '""';
+  position: absolute;
+  right: -700px;
+  bottom: -710px;
+  border-radius: 50%;
+  width: 87%;
+  height: 156%;
+  background: -webkit-radial-gradient(
+    circle,
+    rgba(132, 17, 230, 1) -14%,
+    rgba(132, 17, 230, -359.884) 46%,
+    rgba(132, 17, 230, -13.884) 57%
+  );
+  transform: rotate(45deg);
+  z-index: 0;
+}
